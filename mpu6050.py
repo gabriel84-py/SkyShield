@@ -63,7 +63,7 @@ class MPU6050:
         # Convertir les octets en valeurs d'accélération (X, Y, Z)
         ax = self._to_int16(d[0], d[1])
         ay = self._to_int16(d[2], d[3])
-        az = self._to_int16(d[4], d[5])
+        az = self._to_int16(d[4], d[5]) # +16384 pour 1g si capteur à plat c'est physique sido....
         
         # Convertir les octets en valeurs de rotation (X, Y, Z)
         gx = self._to_int16(d[8], d[9])
