@@ -3,104 +3,100 @@ import math
 import time
 
 
-
 class MPU6050:
+    """Classe pour lire les données du capteur MPU6050 (gyroscope + accéléromètre)"""
+
     def __init__(self, i2c_id=0, scl=21, sda=20, addr=0x68):
+        """
+        Initialise le capteur MPU6050
+        - i2c_id: numéro du bus I2C (0 ou 1)
+        - scl: pin horloge I2C
+        - sda: pin données I2C
+        - addr: adresse I2C du capteur (0x68 par défaut)
+        """
+        # Création du bus I2C
         self.i2c = I2C(
             i2c_id,
             scl=Pin(scl),
             sda=Pin(sda),
-            freq=400_000
+            freq=400_000  # Fréquence 400kHz
         )
 
+        # Sauvegarde de l'adresse du capteur
         self.addr = addr
+
+        # Réveiller le capteur (il démarre en mode veille)
         self._wake()
 
-        # Offsets capteurs
-        self.gx_offset = 0.0
-        self.gy_offset = 0.0
-        self.gz_offset = 0.0
+        # Variables pour stocker les angles calculés
+        self.roll = 0.0  # Rotation gauche/droite
+        self.pitch = 0.0  # Rotation avant/arrière
 
-        self.ax_offset = 0.0
-        self.ay_offset = 0.0
-
-        # Angles calculés
-        self.roll = 0.0
-        self.pitch = 0.0
-
+        # Mémoriser le temps pour calculer les angles
         self.last_time = time.ticks_us()
 
     def _wake(self):
+        """Réveille le capteur en écrivant 0 dans le registre d'alimentation"""
         self.i2c.writeto_mem(self.addr, 0x6B, b'\x00')
 
     def _to_int16(self, h, l):
+        """
+        Convertit 2 octets en nombre signé 16 bits
+        - h: octet de poids fort
+        - l: octet de poids faible
+        """
+        # Combine les 2 octets
         v = (h << 8) | l
+        # Si le nombre est négatif (> 32767), le convertir
         return v - 65536 if v > 32767 else v
 
     def read_raw(self):
+        """
+        Lit les valeurs brutes du capteur
+        Retourne: ax, ay, az (accélération), gx, gy, gz (rotation)
+        """
+        # Lire 14 octets à partir du registre 0x3B
+        # (6 pour accéléromètre + 2 température + 6 pour gyroscope)
         d = self.i2c.readfrom_mem(self.addr, 0x3B, 14)
 
+        # Convertir les octets en valeurs d'accélération (X, Y, Z)
         ax = self._to_int16(d[0], d[1])
         ay = self._to_int16(d[2], d[3])
         az = self._to_int16(d[4], d[5])
 
+        # Convertir les octets en valeurs de rotation (X, Y, Z)
         gx = self._to_int16(d[8], d[9])
         gy = self._to_int16(d[10], d[11])
         gz = self._to_int16(d[12], d[13])
 
         return ax, ay, az, gx, gy, gz
 
-    # -------------------------------
-    # CALIBRATION PRO
-    # -------------------------------
-    def calibrate(self, samples=1000):
-        print("IMU calibration... DO NOT MOVE")
-
-        sum_gx = sum_gy = sum_gz = 0
-        sum_ax = sum_ay = 0
-
-        for _ in range(samples):
-            ax, ay, az, gx, gy, gz = self.read_raw()
-
-            sum_gx += gx
-            sum_gy += gy
-            sum_gz += gz
-
-            sum_ax += ax
-            sum_ay += ay
-
-            time.sleep(0.002)
-
-        self.gx_offset = sum_gx / samples
-        self.gy_offset = sum_gy / samples
-        self.gz_offset = sum_gz / samples
-
-        self.ax_offset = sum_ax / samples
-        self.ay_offset = sum_ay / samples
-
-        print("Calibration done")
-
-    # -------------------------------
-    # LECTURE ANGLES
-    # -------------------------------
     def read_angles(self):
+        """
+        Calcule les angles roll (roulis) et pitch (tangage)
+        en combinant gyroscope et accéléromètre
+        Retourne: roll, pitch (en degrés)
+        """
+        # Lire les valeurs brutes
         ax, ay, az, gx, gy, gz = self.read_raw()
 
-        # Correction offsets
-        gx = (gx - self.gx_offset) / 131.0
-        gy = (gy - self.gy_offset) / 131.0
+        # Convertir le gyroscope en degrés/seconde
+        # (131 = facteur de conversion du MPU6050)
+        gx = gx / 131.0
+        gy = gy / 131.0
 
-        ax -= self.ax_offset
-        ay -= self.ay_offset
-
-        # Accéléromètre → angles
+        # Calculer les angles depuis l'accéléromètre
+        # atan2 = arctangente qui gère les 4 quadrants
         acc_roll = math.atan2(ay, az) * 180 / math.pi
         acc_pitch = math.atan2(-ax, az) * 180 / math.pi
 
+        # Calculer le temps écoulé depuis la dernière lecture
         now = time.ticks_us()
-        dt = time.ticks_diff(now, self.last_time) / 1_000_000
+        dt = time.ticks_diff(now, self.last_time) / 1_000_000  # en secondes
         self.last_time = now
 
+        # Filtre complémentaire (fusion gyro + accel)
+        # 98% gyroscope (précis court terme) + 2% accéléromètre (précis long terme)
         alpha = 0.98
         self.roll = alpha * (self.roll + gx * dt) + (1 - alpha) * acc_roll
         self.pitch = alpha * (self.pitch + gy * dt) + (1 - alpha) * acc_pitch
