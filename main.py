@@ -1,28 +1,26 @@
 from mpu6050 import MPU6050
 import time
 
-
 # Initialiser le capteur MPU6050 (pins 21 et 20)
-mpu = MPU6050(scl=21, sda=20)
+mpu = MPU6050(scl=27, sda=26, addr=0x68)
 
-# Message de démarrage
 print("=== Lecture MPU6050 ===")
-print("Roll = rotation gauche/droite je sais que tu sais sido tkt :p")
+print("Roll = rotation gauche/droite")
 print("Pitch = rotation avant/arrière")
-print("-" * 40)
+print("Yaw = rotation autour de l'axe vertical")
+print("-" * 50)
 
 # Boucle infinie pour lire et afficher
 while True:
-    # Lire les angles roll et pitch
-    roll, pitch = mpu.read_angles()
+    # Lire angles roll, pitch et yaw
+    roll, pitch, yaw = mpu.read_angles()
     
-    # Afficher dans la console
-    print(f"Roll: {roll:6.2f}°  |  Pitch: {pitch:6.2f}°")
-    
-    # Pause de 100ms entre chaque lecture
+    # Afficher angles formatés 2 décimales 6 caractères largeur f pour float (ps sido tu connaissait ou pas ?)
+    print(f"Roll: {roll:6.2f}°  |  Pitch: {pitch:6.2f}°  |  Yaw: {yaw:6.2f}°")
+
     time.sleep(0.1)
 
-"raiseppels : "
+"rappels : "
 """
 | Paramètre    | Valeur     |
 | ------------ | ---------- |
