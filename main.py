@@ -1,31 +1,25 @@
 from mpu6050 import MPU6050
-from oled import OLED
 import time
-
-# Initialiser l'écran OLED (pins 9 et 8)
-oled = OLED(scl=9, sda=8)
 
 # Initialiser le capteur MPU6050 (pins 21 et 20)
 mpu = MPU6050(scl=21, sda=20)
 
 # Message de démarrage
 print("=== Lecture MPU6050 ===")
-print("Affichage sur OLED...")
+print("Roll = rotation gauche/droite")
+print("Pitch = rotation avant/arrière")
+print("-" * 40)
 
 # Boucle infinie pour lire et afficher
 while True:
     # Lire les angles roll et pitch
     roll, pitch = mpu.read_angles()
-
-    # Afficher sur l'écran OLED
-    oled.show_angles(roll, pitch)
-
-    # Afficher aussi dans le terminal
+    
+    # Afficher dans la console
     print(f"Roll: {roll:6.2f}°  |  Pitch: {pitch:6.2f}°")
-
+    
     # Pause de 100ms entre chaque lecture
     time.sleep(0.1)
-
 
 "raiseppels : "
 """
