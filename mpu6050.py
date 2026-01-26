@@ -6,6 +6,7 @@ import time
 class MPU6050:
     """Classe pour lire les données du capteur MPU6050 (gyroscope + accéléromètre)"""
 
+
     def __init__(self, i2c_id=0, scl=21, sda=20, addr=0x68):
         """
         Initialise le capteur MPU6050

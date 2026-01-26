@@ -1,6 +1,7 @@
 from mpu6050 import MPU6050
 import time
 
+
 # Initialiser le capteur MPU6050 (pins 21 et 20)
 mpu = MPU6050(scl=21, sda=20)
 
