@@ -29,8 +29,8 @@ class MPU6050:
         self._wake()
 
         # Variables pour stocker les angles calculés
-        self.roll = 0.0  # Rotation gauche/droite
-        self.pitch = 0.0  # Rotation avant/arrière
+        self.roll = 0.0  # Rotation gauche/droite (ps sido je sais très bien que tu sais ce que c'est le roulis :p)
+        self.pitch = 0.0  # Rotation avant/arrière (ps sido je sais très bien que tu sais ce que c'est le tangage :p)
 
         # Mémoriser le temps pour calculer les angles
         self.last_time = time.ticks_us()
