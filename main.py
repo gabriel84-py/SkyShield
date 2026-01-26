@@ -6,7 +6,7 @@ mpu = MPU6050(scl=21, sda=20)
 
 # Message de démarrage
 print("=== Lecture MPU6050 ===")
-print("Roll = rotation gauche/droite")
+print("Roll = rotation gauche/droite je sais que tu sais sido tkt :p")
 print("Pitch = rotation avant/arrière")
 print("-" * 40)
 

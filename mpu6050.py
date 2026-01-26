@@ -36,8 +36,29 @@ class MPU6050:
         self.last_time = time.ticks_us()
 
     def _wake(self):
-        """Réveille le capteur en écrivant 0 dans le registre d'alimentation"""
-        self.i2c.writeto_mem(self.addr, 0x6B, b'\x00')
+        """Réveille et initialise correctement le capteur"""
+        try:
+            # Reset complet du capteur
+            self.i2c.writeto_mem(self.addr, 0x6B, b'\x80')
+            time.sleep(0.1)  # Attendre 100ms après le reset
+            
+            # Réveiller le capteur (sortir du mode veille)
+            self.i2c.writeto_mem(self.addr, 0x6B, b'\x00')
+            time.sleep(0.01)  # Attendre 10ms
+            
+            # Configurer le gyroscope (plage ±250°/s)
+            self.i2c.writeto_mem(self.addr, 0x1B, b'\x00')
+            
+            # Configurer l'accéléromètre (plage ±2g)
+            self.i2c.writeto_mem(self.addr, 0x1C, b'\x00')
+            
+            # Désactiver le mode veille (double vérification)
+            self.i2c.writeto_mem(self.addr, 0x6B, b'\x00')
+            
+        except OSError as e:
+            print(f"Erreur d'initialisation MPU6050: {e}")
+            print("Vérifiez les connexions et réessayez")
+            raise
 
     def _to_int16(self, h, l):
         """
