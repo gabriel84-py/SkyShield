@@ -1,0 +1,24 @@
+Semaine,Objectif principal,Tâches techniques,Livrable obligatoire
+Semaine 1,Architecture globale,Choix concept suivi humain (vision ou balise),Schéma système validé
+Semaine 1,,Choix composants (moteurs ESC batterie capteurs),Liste composants finale
+
+Semaine 2,Structure mécanique,Conception CAO châssis drone,Modèle 3D châssis
+Semaine 2,,Conception mécanisme parapluie,Modèle 3D parapluie
+
+Semaine 3,Impression et assemblage,Impression 3D châssis et parapluie,Structure physique assemblée
+Semaine 3,,Montage moteurs et hélices,Drone mécaniquement complet
+
+Semaine 4,Électronique de base,Câblage ESC moteurs alimentation,Drone alimenté sans vol
+Semaine 4,,Programmation PWM moteurs (MicroPython),Contrôle moteurs individuel
+
+Semaine 5,Stabilisation,Implémentation IMU (gyro/accel),Lecture capteurs fonctionnelle
+Semaine 5,,PID stabilisation,Drone stable sur banc de test
+
+Semaine 6,Suivi humain,Implémentation système suivi (vision ou balise),Position cible détectée
+Semaine 6,,Algorithme déplacement relatif,Drone se déplace vers cible
+
+Semaine 7,Intégration parapluie,Gestion masse et équilibre,Vol stable avec parapluie
+Semaine 7,,Test pluie simulée,Protection fonctionnelle
+
+Semaine 8,Validation finale,Tests extérieurs contrôlés,Drone suit une personne
+Semaine 8,,Sécurité et arrêt d’urgence,Système sûr et démontrable
