@@ -10,6 +10,7 @@ print("Pitch = rotation avant/arrière")
 print("Yaw = rotation autour de l'axe vertical")
 print("-" * 50)
 
+
 # Boucle infinie pour lire et afficher
 while True:
     # Lire angles roll, pitch et yaw
