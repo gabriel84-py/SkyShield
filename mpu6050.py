@@ -56,7 +56,7 @@ class MPU6050:
     def read_raw(self):
         """
         Lit les valeurs brutes du capteur
-        Retourne: ax, ay, az (accélération), gx, gy, gz (rotation)
+        Retourne: ax, ay, az (accélération), gx, gy, gz (rotation) en enlevant les offsets de calibration
         """
         # Lire 14 octets à partir du registre 0x3B
         # (6 pour accéléromètre + 2 température + 6 pour gyroscope)
@@ -65,7 +65,7 @@ class MPU6050:
         # Convertir les octets en valeurs d'accélération (X, Y, Z)
         ax = self._to_int16(d[0], d[1])
         ay = self._to_int16(d[2], d[3])
-        az = self._to_int16(d[4], d[5]) # +16384 pour 1g si capteur à plat c'est physique sido....
+        az = self._to_int16(d[4], d[5])
         
         # Convertir les octets en valeurs de rotation (X, Y, Z)
         gx = self._to_int16(d[8], d[9])
