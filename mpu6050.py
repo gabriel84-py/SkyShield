@@ -257,3 +257,8 @@ class MPU6050:
         print(f"gz : {offset_gz}")
 
         return offset_ax, offset_ay, offset_az, offset_gx, offset_gy, offset_gz
+
+    def reset_yaw(self):
+        """Reset yaw"""
+        self.yaw = 0.0
+        print("Yaw reseted")
