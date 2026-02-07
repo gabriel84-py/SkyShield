@@ -22,23 +22,22 @@ class FlightController:
         
         # === PID CONTROLLERS ===
         print("Init PID...")
-        # Roll (rotation gauche/droite)
+        # Roll
         self.pid_roll = PID(
             kp=0.8,
             ki=0.02,
             kd=0.25,
-            output_limits=(-25, 25),  # ±25% correction max
+            output_limits=(-25, 25),  # correction max
             integral_limit=10
         )
 
-        # Dans __init__
         from vl53l0x import VL53L0X
 
         # init capteur altitude
         self.altitude_sensor = VL53L0X(
             i2c_id=0,
-            scl=13,
-            sda=12,
+            scl=21,
+            sda=20,
             addr=0x29
         )
 
@@ -66,7 +65,7 @@ class FlightController:
         self.target_pitch = 0.0  # horizontal
         
         # === THROTTLE ===
-        self.base_throttle = 0  # init 0 (sécurité)
+        self.base_throttle = 0  # init 0
         self.min_throttle = 15  # min stable
         self.max_throttle = 40  # limite banc test
         
@@ -80,10 +79,10 @@ class FlightController:
         self.last_loop_time = time.ticks_us()
         self.loop_rate = 0.0
         
-        print("Flight controller ready !")
+        print("FL okayyy zéééépartiiiiii !")
     
     def arm(self):
-        """Arme ESC (obligatoire avant vol)"""
+        """Arme ESC"""
         print("\n=== ARMEMENT ESC ===")
         self.m1.arm()
         self.m2.arm()
@@ -95,7 +94,7 @@ class FlightController:
         self.pid_pitch.reset()
         
         self.armed = True
-        print("ESC armés - READY !\n")
+        print("ESC armés ; zééépartiiiiii\n")
     
     def disarm(self):
         """Désarme (arrêt moteurs)"""
@@ -104,17 +103,17 @@ class FlightController:
         self.m3.stop()
         self.m4.stop()
         self.armed = False
-        print("ESC désarmés")
+        print("ESC désarmés (pas cooool...)")
     
     def emergency(self):
         """Arrêt urgence"""
         self.emergency_stop = True
         self.disarm()
-        print("\n!!! EMERGENCY STOP !!!")
+        print("\n!!! EMERGENCY STOP !!! (aïe, aïe, pas booon çaaa...)")
     
     def set_throttle(self, throttle):
         """Change throttle base (0-100%)"""
-        self.base_throttle = max(0, min(self.max_throttle, throttle))
+        self.base_throttle = max(0, min(self.max_throttle, throttle)) #pr prendre valeur autorisée 
     
     def set_pid_gains(self, axis, kp=None, ki=None, kd=None):
         """Change gains PID en direct"""
@@ -127,7 +126,7 @@ class FlightController:
         """Vérifie sécurités"""
         # angle trop grand
         if abs(roll) > self.max_angle or abs(pitch) > self.max_angle:
-            print(f"ANGLE LIMITE ! Roll:{roll:.1f} Pitch:{pitch:.1f}")
+            print(f"ANGLE LIMITE ! Roll:{roll:.1f} Pitch:{pitch:.1f} attention gabi, remets ça droit dessuite !!!!! (sinon sido vas se facher....)")
             self.emergency()
             return False
         
@@ -136,6 +135,8 @@ class FlightController:
     def mix_motors(self, throttle, corr_roll, corr_pitch):
         """
         Mixage config X standard
+
+        (madame Savinas va-t-elle vraiment lire notre code ? donc les docstrings ça sert a rien ?)
         
         Params :
         - throttle : throttle base (0-100)

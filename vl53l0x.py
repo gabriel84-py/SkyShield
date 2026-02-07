@@ -9,7 +9,7 @@ class VL53L0X:
     REG_SYSRANGE_START = 0x00
     REG_RESULT_RANGE_STATUS = 0x14
     
-    def __init__(self, i2c_id=0, scl=17, sda=16, addr=0x29):
+    def __init__(self, i2c_id=1, scl=17, sda=16, addr=0x29):
         """
         Init capteur VL53L0X
         

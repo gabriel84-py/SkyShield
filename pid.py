@@ -34,6 +34,9 @@ class PID:
     def compute(self, setpoint, measurement):
         """
         Calc correction PID
+
+        vivelesmathsquememeenprepailsfontpas....
+        j'ai dus regarder 40 videos d'indiens pour juste cette méthode...
         
         Params :
         - setpoint : cible (ex: roll = 0°)
@@ -86,7 +89,7 @@ class PID:
         return output
     
     def reset(self):
-        """Reset états internes (important au démarrage vol !)"""
+        """Reset états internes (au démarrage !)"""
         self.integral = 0.0
         self.last_error = 0.0
         self.last_time = time.ticks_us()

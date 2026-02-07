@@ -9,8 +9,8 @@ print("="*50)
 try:
     sensor = VL53L0X(
         i2c_id=0,
-        scl=13,
-        sda=12,
+        scl=21,
+        sda=20,
         addr=0x29
     )
 except Exception as e:
