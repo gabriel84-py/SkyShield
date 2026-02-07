@@ -1,7 +1,6 @@
 """https://github.com/micropython/micropython-lib : code lib for the sensors"""
 
 from mpu6050 import MPU6050
-from sd_logger import SDLogger
 import time
 
 # init capt MPU6050 (pins 27 et 26)
