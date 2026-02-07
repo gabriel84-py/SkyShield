@@ -35,7 +35,12 @@ class FlightController:
         from vl53l0x import VL53L0X
 
         # init capteur altitude
-        self.altitude_sensor = VL53L0X(scl=21, sda=20)
+        self.altitude_sensor = VL53L0X(
+            i2c_id=0,
+            scl=13,
+            sda=12,
+            addr=0x29
+        )
 
         # PID altitude
         self.pid_altitude = PID(

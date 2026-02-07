@@ -6,7 +6,6 @@ print("   TEST CAPTEUR VL53L0X LASER TOF")
 print("="*50)
 
 # init capteur 
-# Ajuste selon ton câblage !
 try:
     sensor = VL53L0X(
         i2c_id=0,
