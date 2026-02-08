@@ -1,3 +1,10 @@
+| Filtre        | Fréquence   |
+| ------------- | ----------- |
+| Low-pass gyro | 80–100 Hz  |
+| Notch frame   | 100–130 Hz |
+| Notch moteur  | 600–800 Hz |
+
+
 FRAME : True X 250mm
 POIDS : 444g (léger !)
 BATTERIE : 3S 2300mAh 45C @ 11.45V (50% charge)
