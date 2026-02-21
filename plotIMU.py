@@ -105,7 +105,7 @@ fig.axes[-1].set_visible(False)
 
 # ── sauvegarde ────────────────────────────────────────────────
 basename = os.path.splitext(os.path.basename(fname))[0]
-out = os.path.join(os.path.dirname(fname), basename + "_plot.png")
+out = os.path.join(os.path.dirname(fname), basename + f"_plot{random.randint(1,100)}.png")
 # si le dossier source est en lecture seule → sauvegarde à côté du script
 if not os.access(os.path.dirname(os.path.abspath(out)), os.W_OK):
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), basename + f"_plot{random.randint(1,100)}.png")
