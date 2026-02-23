@@ -13,11 +13,12 @@ class FlightController:
         self.mpu = MPU6050(scl=27, sda=26, addr=0x68)
 
         # === MOTEURS (config X) ===
+        # RP2040: GPIO 2 et 3 partagent le slice PWM 1 → moteur 2 sur GPIO 6 (slice dédié)
         print("Init moteurs...")
-        self.m1 = ESC(pin=2)   # front right (CW)
-        self.m2 = ESC(pin=3)   # rear  right (CCW)
-        self.m3 = ESC(pin=4)   # rear  left  (CW)
-        self.m4 = ESC(pin=5)   # front left  (CCW)
+        self.m1 = ESC(pin=2)   # front right (CW)  - slice 1A
+        self.m2 = ESC(pin=6)   # rear  right (CCW) - slice 3A (évite conflit pin 3)
+        self.m3 = ESC(pin=4)   # rear  left  (CW)   - slice 2A
+        self.m4 = ESC(pin=8)   # front left  (CCW) - slice 2B
 
         # === PID ===
         print("Init PID...")
@@ -52,7 +53,7 @@ class FlightController:
         # Seuil physique moteur : en dessous les moteurs sont silencieux.
         # On ne COUPE PAS (apply_deadband) mais on SNAP au minimum
         # pour que dès que le throttle est > 0, les moteurs tournent vraiment.
-        self.MIN_MOTOR = 15.0       # % minimum pour qu'un moteur tourne
+        self.MIN_MOTOR = 10.0       # % minimum pour qu'un moteur tourne
 
         # ── DEADZONE RADIO avec HYSTÉRÉSIS ───────────────────────
         # Problème : radio envoie 3.5-11% au repos.
@@ -64,7 +65,7 @@ class FlightController:
         #   DEAD_OFF : seuil pour DÉSACTIVER (descente de gaz)
         #   DEAD_OFF < DEAD_ON  → zone tampon entre les deux
         self.DEAD_ON  = 14.0   # radio doit dépasser 14% pour activer
-        self.DEAD_OFF = 9.0    # radio doit descendre sous 9% pour couper
+        self.DEAD_OFF = 11.5    # radio doit descendre sous X% pour couper
         self._throttle_active = False   # état hystérésis
 
         # === SÉCURITÉS ===
@@ -77,6 +78,12 @@ class FlightController:
         self.last_loop_time = time.ticks_us()
         self.loop_rate      = 0.0
         self._prev_throttle = 0.0
+
+        # pour eviter les throtles bizares
+        self.last_valid_throttle = 0.0
+        self.last_radio_time = time.ticks_ms()
+        self.radio_timeout_ms = 300
+
 
         print("FlightController prêt !")
 
@@ -167,9 +174,10 @@ class FlightController:
             # coupure gaz : reset pour éviter intégrale fantôme
             self.pid_roll.reset()
             self.pid_pitch.reset()
-
-        self._prev_throttle = new_throttle
-        self.base_throttle  = new_throttle
+        
+        filtered = self.filter_throttle(new_throttle)
+        self._prev_throttle = filtered
+        self.base_throttle  = filtered
 
     # ─────────────────────────────────────────────────────────────
     def set_pid_gains(self, axis, kp=None, ki=None, kd=None):
@@ -275,6 +283,28 @@ class FlightController:
             self.last_loop_time = now
 
         return roll, pitch, m1, m2, m3, m4, corr_roll, corr_pitch
+
+    def filter_throttle(self, raw_throttle):
+        now = time.ticks_ms()
+
+        # Si signal non nul --> valide
+        if raw_throttle > 5:
+            self.last_valid_throttle = raw_throttle
+            self.last_radio_time = now
+            return raw_throttle
+
+        # Si 0 mais trop court --> glitch
+        if raw_throttle <= 5:
+            dt = time.ticks_diff(now, self.last_radio_time)
+
+            if dt < self.radio_timeout_ms:
+                # Glitch radio --> garde ancien throttle
+                return self.last_valid_throttle
+            else:
+                # vrai arrêt volontaire
+                self.last_valid_throttle = 0
+                return 0
+
 
     def get_pid_terms(self, axis):
         if axis == 'roll':

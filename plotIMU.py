@@ -3,7 +3,7 @@ import matplotlib.gridspec as gridspec
 import csv
 import sys
 import os
-import random
+import time
 
 # ── lecture fichier (argument ou défaut) ──────────────────────
 fname = sys.argv[1] if len(sys.argv) > 1 else "imu_data.csv"
@@ -105,10 +105,10 @@ fig.axes[-1].set_visible(False)
 
 # ── sauvegarde ────────────────────────────────────────────────
 basename = os.path.splitext(os.path.basename(fname))[0]
-out = os.path.join(os.path.dirname(fname), basename + f"_plot{random.randint(1,100)}.png")
+out = os.path.join(os.path.dirname(fname), basename + f"_plot{time.time()}.png")
 # si le dossier source est en lecture seule → sauvegarde à côté du script
 if not os.access(os.path.dirname(os.path.abspath(out)), os.W_OK):
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), basename + f"_plot{random.randint(1,100)}.png")
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), basename + f"_plot{time.time()}.png")
 plt.savefig(out, dpi=150, bbox_inches='tight')
 print(f"Graphique sauvegardé : {out}")
 plt.show()

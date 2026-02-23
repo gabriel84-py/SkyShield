@@ -6,7 +6,7 @@ import time
 #  CONFIGURATION
 # ============================================================
 RX_PIN        = 10    # pin signal radio throttle
-MAX_THROTTLE  = 30    # limite sécurité banc test (%)
+MAX_THROTTLE  = 70    # limite sécurité banc test (%)
 MIN_ARM_PULSE = 900   # µs min signal radio valide
 MAX_ARM_PULSE = 2100  # µs max signal radio valide
 LOG_FILE      = "imu_data.csv"
@@ -29,6 +29,7 @@ csv_file.write("time,roll,pitch,throttle,m1,m2,m3,m4,corr_roll,corr_pitch,p_roll
 start_time    = time.ticks_ms()
 last_throttle = 0.0
 loop_count    = 0
+fc.max_throttle = MAX_THROTTLE 
 
 print(f"Boucle lancée — cible {1000 // LOOP_MS} Hz")
 print(f"Deadzone radio  : active sous {fc.DEAD_OFF:.0f}%, active au-dessus de {fc.DEAD_ON:.0f}%")

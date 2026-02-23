@@ -1,6 +1,9 @@
 from machine import Pin, PWM
 import time
 
+# RP2040 (Pico): chaque slice PWM a 2 canaux (A/B). GPIO 2+3 = slice 1, GPIO 4+5 = slice 2.
+# Éviter 2 moteurs sur le même slice (comportement erratique). Moteur 2 → GPIO 6 (slice 3).
+
 class ESC:
     """Classe pr contrôler ESC/moteur brushless via PWM"""
     
@@ -12,32 +15,20 @@ class ESC:
         self.max_us = max_us
         self.period_us = 1_000_000 / freq
 
-        # ── FIX : signal coupé dès l'init ────────────────────────
-        # duty_u16(0) = aucune impulsion = moteur garanti à l'arrêt
-        # L'ancien code appelait throttle(0) qui envoyait 1000µs,
-        # ce qui peut faire tourner certains ESC légèrement
-        self.pwm.duty_u16(0)
+        self.pwm.duty_u16(self._us_to_duty(self.min_us))
+
     
     def _us_to_duty(self, us):
         """Convert µs → duty cycle 16 bits"""
         return int((us / self.period_us) * 65535)
     
     def throttle(self, percent):
-        """
-        Définit vitesse moteur
-        percent = 0 à 100 (0 = arrêt total, 100 = plein gaz)
-        """
         percent = max(0, min(100, percent))
 
-        # ── FIX : si 0% → coupe le signal PWM complètement ──────
-        # duty_u16(0) = silence total sur le pin
-        # ≠ impulsion 1000µs qui peut faire tourner certains ESC
-        if percent == 0:
-            self.pwm.duty_u16(0)
-            return
-
+        # Toujours envoyer au minimum 1000µs
         pulse_us = self.min_us + (percent / 100.0) * (self.max_us - self.min_us)
         self.pwm.duty_u16(self._us_to_duty(pulse_us))
+
     
     def arm(self):
         """
@@ -55,4 +46,4 @@ class ESC:
     
     def stop(self):
         """Arrêt immédiat — coupe le signal PWM"""
-        self.pwm.duty_u16(0)
+        self.pwm.duty_u16(self._us_to_duty(self.min_us))
