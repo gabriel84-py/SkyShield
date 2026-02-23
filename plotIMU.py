@@ -91,7 +91,7 @@ if has_pid:
     ax4.plot(t, cols["i_pitch"],   color='#F44336', lw=1.0, ls='--', label='I pitch', alpha=0.6)
     ax4.plot(t, cols["d_pitch"],   color='#F44336', lw=1.0, ls=':',  label='D pitch', alpha=0.6)
     ax4.axhline(0, color='k', lw=0.5, ls='--', alpha=0.4)
-    ax4.set_ylabel('Correction')
+    ax4.set_ylabel('Correction (% throttle)')
     ax4.set_title('Termes PID (P/I/D séparés)')
     ax4.legend(loc='upper right', fontsize=8, ncol=2)
     ax4.grid(True, alpha=0.25)
