@@ -229,10 +229,10 @@ class FlightController:
         if throttle <= 0:
             return 0, 0, 0, 0
 
-        m1 = self._snap_to_min(throttle + corr_roll - corr_pitch)  # front right
-        m2 = self._snap_to_min(throttle + corr_roll + corr_pitch)  # rear  right
-        m3 = self._snap_to_min(throttle - corr_roll + corr_pitch)  # rear  left
-        m4 = self._snap_to_min(throttle - corr_roll - corr_pitch)  # front left
+        m1 = self._snap_to_min(throttle - corr_roll - corr_pitch)  # front-right
+        m2 = self._snap_to_min(throttle + corr_roll - corr_pitch)  # front-left
+        m3 = self._snap_to_min(throttle + corr_roll + corr_pitch)  # rear-left
+        m4 = self._snap_to_min(throttle - corr_roll + corr_pitch)  # rear-right
 
         return m1, m2, m3, m4
 

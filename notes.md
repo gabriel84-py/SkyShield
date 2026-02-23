@@ -10,12 +10,24 @@ POIDS : 444g (léger !)
 BATTERIE : 3S 2300mAh 45C @ 11.45V (50% charge)
 RATIO POUSSÉE/POIDS : 1600g / 444g = 3.6:1 
 
-MOTEURS :
-- M1 (front right CW) : GP2
-- M2 (rear right CCW) : GP3  
-- M3 (rear left CW) : GP4
-- M4 (front left CCW) : GP5
+MOTEURS — disposition physique réelle (vue de dessus) :
+
+  M1(CW) front-right  ──  M2(CCW) front-left
+          |       X       |
+  M4(CCW) rear-right  ──  M3(CW)  rear-left
+
+- M1 (front-right CW)  : GP2
+- M2 (front-left  CCW) : GP6
+- M3 (rear-left   CW)  : GP4
+- M4 (rear-right  CCW) : GP8
+
 Throttle min stable : 15%
+
+MIXAGE PID (corr_roll > 0 = correction droite, corr_pitch > 0 = correction avant) :
+  M1 = throttle - corr_roll - corr_pitch
+  M2 = throttle + corr_roll - corr_pitch
+  M3 = throttle + corr_roll + corr_pitch
+  M4 = throttle - corr_roll + corr_pitch
 
 IMU : MPU6050
 - I2C : GP27 (SCL), GP26 (SDA)
@@ -25,4 +37,4 @@ IMU : MPU6050
 - Pas INT (pr l'instant)
 
 CONTRÔLE : PC → USB → Pico (ou radio)
-OBJECTIF : Tuning PID Roll/Pitch sur banc test
+OBJECTIF : Tuning PID Roll/Pitch sur banc de test
