@@ -1,5 +1,5 @@
-| Filtre        | Fréquence   |
-| ------------- | ----------- |
+| Filtre        | Fréquence  |
+| ------------- | -----------|
 | Low-pass gyro | 80–100 Hz  |
 | Notch frame   | 100–130 Hz |
 | Notch moteur  | 600–800 Hz |

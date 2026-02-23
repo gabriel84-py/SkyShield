@@ -6,7 +6,7 @@ import time
 #  CONFIGURATION
 # ============================================================
 RX_PIN        = 10    # pin signal radio throttle
-MAX_THROTTLE  = 70    # limite sécurité banc test (%)
+MAX_THROTTLE  = 30    # limite sécurité banc test (%)
 MIN_ARM_PULSE = 900   # µs min signal radio valide
 MAX_ARM_PULSE = 2100  # µs max signal radio valide
 LOG_FILE      = "imu_data.csv"
