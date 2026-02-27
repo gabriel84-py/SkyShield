@@ -4,7 +4,7 @@ import time
 
 # ============================================================
 #  CONFIGURATION
-# ============================================================
+# ============================================================""
 RX_PIN        = 10    # pin signal radio throttle
 MAX_THROTTLE  = 30    # limite sécurité banc test (%)
 MIN_ARM_PULSE = 900   # µs min signal radio valide
